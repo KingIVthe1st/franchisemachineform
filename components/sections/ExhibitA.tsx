@@ -214,7 +214,7 @@ export function ExhibitA({ data, update }: Props) {
       </div>
 
       <p className="mt-6 text-sm text-text-secondary">
-        <strong>Part B.3:</strong> Have you been held liable in a proceeding
+        <strong>Part B.2:</strong> Have you been held liable in a proceeding
         involving:
       </p>
       <div className="space-y-3">
@@ -365,6 +365,49 @@ export function ExhibitA({ data, update }: Props) {
             name="exA_lit_pleadings"
             onFileChange={(file) => update("exA_lit_pleadings", file)}
           />
+
+          {/* Order/Decree Details (for C.1/C.2 injunctive or suspension orders) */}
+          {(data.exA_lit_c1_injunctive === "Yes" ||
+            data.exA_lit_c2_suspension === "Yes") && (
+            <div className="mt-4 space-y-4 border-t border-yellow-500/20 pt-4">
+              <p className="text-sm font-semibold text-yellow-400">
+                Order / Decree Details
+              </p>
+              <Input
+                label="Name of government agency or court that issued the order/decree"
+                value={(data.exA_lit_order_agency as string) || ""}
+                onChange={(e) => update("exA_lit_order_agency", e.target.value)}
+                placeholder="e.g. FTC, State Attorney General, SEC"
+              />
+              <Textarea
+                label="Summary of allegations or charges underlying the order"
+                value={(data.exA_lit_order_allegations as string) || ""}
+                onChange={(e) =>
+                  update("exA_lit_order_allegations", e.target.value)
+                }
+              />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Input
+                  label="Date of order/decree"
+                  type="date"
+                  value={(data.exA_lit_order_date as string) || ""}
+                  onChange={(e) => update("exA_lit_order_date", e.target.value)}
+                />
+                <Input
+                  label="Nature of order (e.g. consent, injunctive, restrictive)"
+                  value={(data.exA_lit_order_nature as string) || ""}
+                  onChange={(e) =>
+                    update("exA_lit_order_nature", e.target.value)
+                  }
+                />
+              </div>
+              <Textarea
+                label="Terms and conditions of the order/decree"
+                value={(data.exA_lit_order_terms as string) || ""}
+                onChange={(e) => update("exA_lit_order_terms", e.target.value)}
+              />
+            </div>
+          )}
         </div>
       )}
 

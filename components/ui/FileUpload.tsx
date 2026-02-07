@@ -54,7 +54,7 @@ export function FileUpload({
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="flex w-full items-center justify-center gap-3 rounded-lg border-2 border-dashed border-border px-6 py-8 text-text-muted transition-all duration-200 hover:border-brand-cyan/50 hover:bg-brand-cyan/5 hover:text-brand-cyan"
+          className="flex w-full items-center justify-center gap-3 rounded-lg border-2 border-dashed border-white/[0.08] px-6 py-8 text-text-muted transition-all duration-300 hover:border-brand-cyan/40 hover:bg-brand-cyan/5 hover:text-brand-cyan hover:shadow-[0_0_20px_rgba(0,212,255,0.08)]"
         >
           <Upload className="h-5 w-5" />
           <span className="text-sm font-medium">Click to upload file</span>

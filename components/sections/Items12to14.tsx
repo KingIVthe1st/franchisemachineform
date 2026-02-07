@@ -43,24 +43,23 @@ export function Items12to14({ data, update }: Props) {
           onChange={(v) => update("q64_protected", v)}
         />
         {data.q64_protected === "Yes" && (
-          <div className="conditional-enter border-l-2 border-brand-cyan/30 pl-5">
+          <div className="conditional-enter space-y-4 border-l-2 border-brand-cyan/30 pl-5">
             <Textarea
               label="How will the territory be determined?"
               value={(data.q64_territory_method as string) || ""}
               onChange={(e) => update("q64_territory_method", e.target.value)}
               placeholder="e.g. radius, population, zip codes"
             />
+            {/* Q65 — nested inside territory conditional */}
+            <Input
+              label="Average or minimum territory size offered?"
+              value={(data.q65_territory_size as string) || ""}
+              onChange={(e) => update("q65_territory_size", e.target.value)}
+              placeholder="e.g. 3-mile radius, 50,000 population"
+            />
           </div>
         )}
       </div>
-
-      {/* Q65 */}
-      <Input
-        label="Average or minimum territory size offered?"
-        value={(data.q65_territory_size as string) || ""}
-        onChange={(e) => update("q65_territory_size", e.target.value)}
-        placeholder="e.g. 3-mile radius, 50,000 population"
-      />
 
       {/* Q66 */}
       <div className="space-y-4 rounded-lg border border-border p-5">

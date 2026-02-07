@@ -39,7 +39,10 @@ const STEPS = [
 
 const WEB3FORMS_KEY = "640b6e44-f07d-4161-a972-2e297273fd85";
 
-function flattenData(data: Record<string, unknown>, prefix = ""): Record<string, string> {
+function flattenData(
+  data: Record<string, unknown>,
+  prefix = "",
+): Record<string, string> {
   const result: Record<string, string> = {};
   for (const [key, value] of Object.entries(data)) {
     const fullKey = prefix ? `${prefix}.${key}` : key;
@@ -59,7 +62,10 @@ function flattenData(data: Record<string, unknown>, prefix = ""): Record<string,
         });
       }
     } else if (typeof value === "object") {
-      Object.assign(result, flattenData(value as Record<string, unknown>, fullKey));
+      Object.assign(
+        result,
+        flattenData(value as Record<string, unknown>, fullKey),
+      );
     } else {
       result[fullKey] = String(value);
     }
@@ -103,7 +109,10 @@ export function FormWizard() {
       const fd = new FormData();
       fd.append("access_key", WEB3FORMS_KEY);
       fd.append("subject", "New FDD Questionnaire Submission");
-      fd.append("from_name", (formData.q1_franchisor_name as string) || "FDD Applicant");
+      fd.append(
+        "from_name",
+        (formData.q1_franchisor_name as string) || "FDD Applicant",
+      );
       fd.append("replyto", (formData.q2_email as string) || "");
 
       // Add all flattened text fields
@@ -129,11 +138,15 @@ export function FormWizard() {
         setSubmitStatus("success");
       } else {
         setSubmitStatus("error");
-        setErrorMessage(result.message || "Submission failed. Please try again.");
+        setErrorMessage(
+          result.message || "Submission failed. Please try again.",
+        );
       }
     } catch {
       setSubmitStatus("error");
-      setErrorMessage("Network error. Please check your connection and try again.");
+      setErrorMessage(
+        "Network error. Please check your connection and try again.",
+      );
     }
   };
 
@@ -193,22 +206,25 @@ export function FormWizard() {
   }
 
   return (
-    <div className="min-h-screen bg-brand-black">
+    <div className="relative min-h-screen bg-brand-black">
+      {/* Ambient Spotlight */}
+      <div className="ambient-spotlight" />
+
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border bg-brand-black/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-brand-black/70 backdrop-blur-2xl">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
           <Image
             src="/logo.jpg"
             alt="Franchise Machine™"
-            width={48}
-            height={48}
-            className="rounded-lg"
+            width={44}
+            height={44}
+            className="rounded-lg shadow-lg"
           />
           <div className="flex items-center gap-4">
-            <span className="hidden text-sm text-text-muted sm:block">
+            <span className="hidden text-xs font-medium tracking-wide text-text-muted sm:block">
               Step {currentStep + 1} of {STEPS.length}
             </span>
-            <div className="h-2 w-32 overflow-hidden rounded-full bg-surface-card sm:w-48">
+            <div className="h-1.5 w-32 overflow-hidden rounded-full bg-white/[0.06] sm:w-48">
               <motion.div
                 className="progress-shimmer h-full rounded-full"
                 initial={{ width: 0 }}
@@ -220,35 +236,40 @@ export function FormWizard() {
         </div>
       </header>
 
-      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:flex lg:gap-8">
+      <div className="relative z-10 mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:flex lg:gap-10">
         {/* Sidebar Navigation */}
         <nav className="mb-8 lg:mb-0 lg:w-64 lg:shrink-0">
-          <div className="sticky top-20 space-y-1 overflow-x-auto lg:overflow-visible">
-            <div className="flex gap-2 lg:flex-col lg:gap-1">
+          <div className="sticky top-20 overflow-x-auto lg:overflow-visible">
+            <div className="relative flex gap-2 lg:flex-col lg:gap-0">
+              {/* Vertical connector line (desktop) */}
+              <div className="absolute left-[15px] top-4 bottom-4 hidden w-px bg-gradient-to-b from-white/[0.08] via-white/[0.04] to-transparent lg:block" />
+
               {STEPS.map((step, index) => (
                 <button
                   key={step.id}
                   onClick={() => goToStep(index)}
-                  className={`flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-left text-sm font-medium transition-all duration-200 ${
+                  className={`relative flex items-center gap-3 whitespace-nowrap rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-all duration-300 ${
                     index === currentStep
-                      ? "bg-brand-cyan/10 text-brand-cyan"
+                      ? "bg-brand-cyan/[0.08] text-brand-cyan"
                       : index < currentStep
-                        ? "text-text-secondary hover:bg-surface-hover hover:text-white"
-                        : "text-text-muted hover:bg-surface-hover hover:text-text-secondary"
+                        ? "text-text-secondary hover:bg-white/[0.03] hover:text-white"
+                        : "text-text-muted hover:bg-white/[0.03] hover:text-text-secondary"
                   }`}
                 >
                   <span
-                    className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                    className={`relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-all duration-300 ${
                       index === currentStep
-                        ? "bg-brand-cyan text-black"
+                        ? "bg-brand-cyan text-black shadow-[0_0_15px_rgba(0,212,255,0.5)]"
                         : index < currentStep
                           ? "bg-brand-cyan/20 text-brand-cyan"
-                          : "bg-surface-card text-text-muted"
+                          : "bg-white/[0.06] text-text-muted"
                     }`}
                   >
                     {index < currentStep ? "✓" : index + 1}
                   </span>
-                  <span className="hidden lg:block">{step.label}</span>
+                  <span className="hidden tracking-wide lg:block">
+                    {step.label}
+                  </span>
                 </button>
               ))}
             </div>
@@ -257,14 +278,14 @@ export function FormWizard() {
 
         {/* Form Content */}
         <main className="min-w-0 flex-1">
-          <div className="rounded-2xl border border-border bg-surface-card/50 p-6 sm:p-8 lg:p-10">
+          <div className="glass-edge relative rounded-2xl border border-white/[0.06] bg-surface-card/60 p-6 shadow-2xl sm:p-8 lg:p-10">
             <AnimatePresence mode="wait">
               <motion.div
                 key={STEPS[currentStep].id}
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               >
                 {renderStep()}
               </motion.div>
@@ -279,11 +300,14 @@ export function FormWizard() {
             )}
 
             {/* Navigation */}
-            <div className="mt-10 flex items-center justify-between border-t border-border pt-6">
+            <div className="relative mt-10 flex items-center justify-between pt-6">
+              {/* Gradient divider */}
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
+
               <button
                 onClick={goPrev}
                 disabled={currentStep === 0}
-                className="flex items-center gap-2 rounded-lg border border-border px-5 py-3 text-sm font-medium text-text-secondary transition-all duration-200 hover:bg-surface-hover hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+                className="flex items-center gap-2 rounded-lg border border-white/[0.06] px-5 py-3 text-sm font-medium text-text-secondary transition-all duration-300 hover:border-white/10 hover:bg-white/[0.03] hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
               >
                 <ChevronLeft className="h-4 w-4" />
                 Previous
@@ -293,7 +317,7 @@ export function FormWizard() {
                 <button
                   onClick={handleSubmit}
                   disabled={submitStatus === "submitting"}
-                  className="flex items-center gap-2 rounded-lg bg-brand-cyan px-8 py-3 text-sm font-bold text-black transition-all duration-200 hover:bg-brand-cyan-light disabled:opacity-50 shadow-lg shadow-brand-cyan/25"
+                  className="flex items-center gap-2 rounded-xl bg-brand-cyan px-8 py-3.5 text-sm font-bold text-black transition-all duration-300 hover:bg-brand-cyan-light hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 shadow-[0_0_25px_rgba(0,212,255,0.3)] hover:shadow-[0_0_35px_rgba(0,212,255,0.5)] border-t border-white/30"
                 >
                   {submitStatus === "submitting" ? (
                     <>
@@ -310,7 +334,7 @@ export function FormWizard() {
               ) : (
                 <button
                   onClick={goNext}
-                  className="flex items-center gap-2 rounded-lg bg-brand-cyan px-8 py-3 text-sm font-bold text-black transition-all duration-200 hover:bg-brand-cyan-light shadow-lg shadow-brand-cyan/25"
+                  className="flex items-center gap-2 rounded-xl bg-brand-cyan px-8 py-3.5 text-sm font-bold text-black transition-all duration-300 hover:bg-brand-cyan-light hover:-translate-y-0.5 active:translate-y-0 shadow-[0_0_25px_rgba(0,212,255,0.3)] hover:shadow-[0_0_35px_rgba(0,212,255,0.5)] border-t border-white/30"
                 >
                   Continue
                   <ChevronRight className="h-4 w-4" />
@@ -322,8 +346,9 @@ export function FormWizard() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-border/50 py-6 text-center text-xs text-text-muted">
-        &copy; {new Date().getFullYear()} Franchise Machine&trade; &mdash; All Rights Reserved
+      <footer className="relative z-10 border-t border-white/[0.04] py-8 text-center text-xs tracking-wide text-text-muted">
+        &copy; {new Date().getFullYear()} Franchise Machine&trade; &mdash; All
+        Rights Reserved
       </footer>
     </div>
   );
@@ -349,39 +374,41 @@ function WelcomeStep() {
         </p>
       </div>
 
-      <div className="mx-auto max-w-2xl rounded-xl border border-border bg-surface-card p-6">
+      <div className="glass-edge mx-auto max-w-2xl rounded-xl border border-white/[0.06] bg-surface-card/80 p-8">
         <p className="leading-relaxed text-text-secondary">
-          Welcome to the Franchise Machine&trade; FDD intake process. This questionnaire
-          is designed to gather the information that we will need in order to prepare
-          the Franchise Disclosure Document (or &ldquo;FDD&rdquo;) for your franchise program in
-          accordance with the Federal Trade Commission&apos;s (&ldquo;FTC&rdquo;) amended Franchise
+          Welcome to the Franchise Machine&trade; FDD intake process. This
+          questionnaire is designed to gather the information that we will need
+          in order to prepare the Franchise Disclosure Document (or
+          &ldquo;FDD&rdquo;) for your franchise program in accordance with the
+          Federal Trade Commission&apos;s (&ldquo;FTC&rdquo;) amended Franchise
           Rule and applicable state law.
         </p>
-        <div className="mt-6 space-y-3">
-          <div className="flex items-start gap-3">
-            <div className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-cyan/20">
-              <span className="text-xs font-bold text-brand-cyan">1</span>
+        <div className="mt-8 space-y-4">
+          <div className="flex items-start gap-4">
+            <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-cyan/15 shadow-[0_0_10px_rgba(0,212,255,0.15)]">
+              <span className="text-[10px] font-bold text-brand-cyan">1</span>
             </div>
-            <p className="text-sm text-text-secondary">
-              Complete each section to the best of your ability. You can navigate
-              between sections at any time.
+            <p className="text-sm leading-relaxed text-text-secondary">
+              Complete each section to the best of your ability. You can
+              navigate between sections at any time.
             </p>
           </div>
-          <div className="flex items-start gap-3">
-            <div className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-cyan/20">
-              <span className="text-xs font-bold text-brand-cyan">2</span>
+          <div className="flex items-start gap-4">
+            <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-cyan/15 shadow-[0_0_10px_rgba(0,212,255,0.15)]">
+              <span className="text-[10px] font-bold text-brand-cyan">2</span>
             </div>
-            <p className="text-sm text-text-secondary">
-              Some questions have conditional fields that appear based on your answers.
+            <p className="text-sm leading-relaxed text-text-secondary">
+              Some questions have conditional fields that appear based on your
+              answers.
             </p>
           </div>
-          <div className="flex items-start gap-3">
-            <div className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-cyan/20">
-              <span className="text-xs font-bold text-brand-cyan">3</span>
+          <div className="flex items-start gap-4">
+            <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-cyan/15 shadow-[0_0_10px_rgba(0,212,255,0.15)]">
+              <span className="text-[10px] font-bold text-brand-cyan">3</span>
             </div>
-            <p className="text-sm text-text-secondary">
-              When finished, submit the form. Your responses will be sent directly
-              to our team for review.
+            <p className="text-sm leading-relaxed text-text-secondary">
+              When finished, submit the form. Your responses will be sent
+              directly to our team for review.
             </p>
           </div>
         </div>

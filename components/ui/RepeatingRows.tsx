@@ -48,14 +48,14 @@ export function RepeatingRows({
       <label className="block text-sm font-medium text-text-secondary">
         {label}
       </label>
-      <div className="overflow-x-auto rounded-lg border border-border">
+      <div className="glass-edge overflow-x-auto rounded-lg border border-white/[0.06]">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-border bg-surface-card">
+            <tr className="border-b border-white/[0.06] bg-white/[0.02]">
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wider text-text-muted"
+                  className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-[0.15em] text-text-muted"
                   style={col.width ? { width: col.width } : undefined}
                 >
                   {col.label}
@@ -68,7 +68,7 @@ export function RepeatingRows({
             {rows.map((row, rowIndex) => (
               <tr
                 key={rowIndex}
-                className="border-b border-border/50 last:border-0"
+                className="table-row-hover border-b border-white/[0.04] transition-colors last:border-0"
               >
                 {columns.map((col) => (
                   <td key={col.key} className="px-2 py-1.5">
@@ -79,7 +79,7 @@ export function RepeatingRows({
                       onChange={(e) =>
                         updateCell(rowIndex, col.key, e.target.value)
                       }
-                      className="w-full rounded border-0 bg-surface-input px-3 py-2 text-sm text-white placeholder-text-muted focus:outline-none focus:ring-1 focus:ring-brand-cyan/30"
+                      className="input-glow w-full rounded border border-transparent bg-surface-input px-3 py-2 text-sm text-white placeholder-text-muted transition-all duration-300 focus:outline-none"
                     />
                   </td>
                 ))}

@@ -284,11 +284,18 @@ export function Item1Franchisor({ data, update }: Props) {
           onChange={(v) => update("q16_provide_products", v)}
         />
         {data.q16_provide_products === "Yes" && (
-          <div className="conditional-enter border-l-2 border-brand-cyan/30 pl-5">
+          <div className="conditional-enter space-y-4 border-l-2 border-brand-cyan/30 pl-5">
+            <Input
+              label="Name of supplier/affiliate"
+              value={(data.q16_supplier_name as string) || ""}
+              onChange={(e) => update("q16_supplier_name", e.target.value)}
+              placeholder="Entity name"
+            />
             <Textarea
-              label="Name and specific products/services"
+              label="Specific products/services provided"
               value={(data.q16_products_desc as string) || ""}
               onChange={(e) => update("q16_products_desc", e.target.value)}
+              placeholder="Describe the products or services"
             />
           </div>
         )}

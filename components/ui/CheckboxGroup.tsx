@@ -39,16 +39,16 @@ export function CheckboxGroup({
           return (
             <label
               key={option}
-              className={`flex cursor-pointer items-start gap-3 rounded-lg border px-4 py-3 transition-all duration-200 ${
+              className={`flex cursor-pointer items-start gap-3 rounded-lg border px-4 py-3 transition-all duration-300 ${
                 checked
-                  ? "border-brand-cyan bg-brand-cyan/10 text-white"
-                  : "border-border bg-surface-input text-text-secondary hover:border-border-light"
+                  ? "border-brand-cyan/50 bg-brand-cyan/10 text-white shadow-[0_0_12px_rgba(0,212,255,0.1)]"
+                  : "border-white/[0.06] bg-transparent text-text-secondary hover:border-white/10 hover:bg-white/[0.03]"
               }`}
             >
               <div
-                className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-all duration-200 ${
+                className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-all duration-300 ${
                   checked
-                    ? "border-brand-cyan bg-brand-cyan"
+                    ? "border-brand-cyan bg-brand-cyan shadow-[0_0_8px_rgba(0,212,255,0.4)]"
                     : "border-text-muted"
                 }`}
               >
