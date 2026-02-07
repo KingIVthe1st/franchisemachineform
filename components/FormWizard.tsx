@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 
+import { buildEmailHtml } from "@/lib/emailFormatter";
 import { Item1Franchisor } from "@/components/sections/Item1Franchisor";
 import { Items2to4 } from "@/components/sections/Items2to4";
 import { Item5InitialFees } from "@/components/sections/Item5InitialFees";
@@ -38,40 +39,6 @@ const STEPS = [
 ];
 
 const WEB3FORMS_KEY = "640b6e44-f07d-4161-a972-2e297273fd85";
-
-function flattenData(
-  data: Record<string, unknown>,
-  prefix = "",
-): Record<string, string> {
-  const result: Record<string, string> = {};
-  for (const [key, value] of Object.entries(data)) {
-    const fullKey = prefix ? `${prefix}.${key}` : key;
-    if (value === null || value === undefined) continue;
-    if (value instanceof File) continue; // files handled separately
-    if (Array.isArray(value)) {
-      if (value.length === 0) continue;
-      if (typeof value[0] === "string") {
-        result[fullKey] = value.join(", ");
-      } else {
-        value.forEach((item, i) => {
-          if (typeof item === "object") {
-            Object.entries(item).forEach(([k, v]) => {
-              if (v) result[`${fullKey}[${i}].${k}`] = String(v);
-            });
-          }
-        });
-      }
-    } else if (typeof value === "object") {
-      Object.assign(
-        result,
-        flattenData(value as Record<string, unknown>, fullKey),
-      );
-    } else {
-      result[fullKey] = String(value);
-    }
-  }
-  return result;
-}
 
 export function FormWizard() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -105,31 +72,21 @@ export function FormWizard() {
     setErrorMessage("");
 
     try {
-      const flat = flattenData(formData);
-      const fd = new FormData();
-      fd.append("access_key", WEB3FORMS_KEY);
-      fd.append("subject", "New FDD Questionnaire Submission");
-      fd.append(
-        "from_name",
-        (formData.q1_franchisor_name as string) || "FDD Applicant",
-      );
-      fd.append("replyto", (formData.q2_email as string) || "");
-
-      // Add all flattened text fields
-      for (const [key, value] of Object.entries(flat)) {
-        fd.append(key, value);
-      }
-
-      // Add file uploads
-      for (const [key, value] of Object.entries(formData)) {
-        if (value instanceof File) {
-          fd.append(key, value);
-        }
-      }
+      const franchisorName =
+        (formData.q1_franchisor_name as string) || "FDD Applicant";
+      const replyEmail = (formData.q2_email as string) || "";
+      const htmlBody = buildEmailHtml(formData);
 
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        body: fd,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          subject: `New FDD Submission — ${franchisorName}`,
+          from_name: franchisorName,
+          replyto: replyEmail,
+          message: htmlBody,
+        }),
       });
 
       const result = await response.json();
