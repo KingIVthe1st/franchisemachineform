@@ -1,6 +1,9 @@
 /**
- * Builds a professionally formatted HTML email body from the FDD questionnaire data.
+ * Builds a clean plain-text email body from the FDD questionnaire data.
  * Organized by FDD Item sections with human-readable labels.
+ *
+ * Web3Forms wraps submissions in its own HTML template, so we send
+ * structured plain text — not raw HTML — to avoid garbled output.
  */
 
 type FormData = Record<string, unknown>;
@@ -256,7 +259,7 @@ const SECTIONS: Section[] = [
     ],
   },
   {
-    title: "Items 2–4 — Experience, Litigation & Bankruptcy",
+    title: "Items 2-4 — Experience, Litigation & Bankruptcy",
     subtitle: "File uploads only (Exhibit A)",
     fields: [],
   },
@@ -278,7 +281,7 @@ const SECTIONS: Section[] = [
     ],
   },
   {
-    title: "Items 6–7 — Other Fees & Initial Investment",
+    title: "Items 6-7 — Other Fees & Initial Investment",
     fields: [
       "q29_cooperatives",
       "q31_refundable",
@@ -377,7 +380,7 @@ const SECTIONS: Section[] = [
     ],
   },
   {
-    title: "Items 12–14 — Territory, Trademarks & IP",
+    title: "Items 12-14 — Territory, Trademarks & IP",
     fields: [
       "q63_location_approval",
       "q64_protected",
@@ -400,7 +403,7 @@ const SECTIONS: Section[] = [
     ],
   },
   {
-    title: "Items 15–21 — Operations & More",
+    title: "Items 15-21 — Operations & More",
     subtitle: "Operations, Public Figures, Financial Performance & Outlets",
     fields: [
       "q70_supervision",
@@ -513,88 +516,36 @@ const COL_LABELS: Record<string, string> = {
   end: "End",
 };
 
-// ─── Styles ─────────────────────────────────────────────────
-
-const S = {
-  body: 'font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #0a0a0f; color: #e2e8f0; margin: 0; padding: 0;',
-  container: "max-width: 700px; margin: 0 auto; padding: 20px;",
-  header:
-    "text-align: center; padding: 30px 20px; border-bottom: 1px solid rgba(255,255,255,0.08);",
-  logo: "font-size: 24px; font-weight: 700; color: #00d4ff; letter-spacing: -0.5px;",
-  subtitle: "font-size: 14px; color: #94a3b8; margin-top: 4px;",
-  sectionHeader:
-    "background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(0,212,255,0.03)); border-left: 3px solid #00d4ff; padding: 12px 16px; margin: 24px 0 12px 0; border-radius: 0 6px 6px 0;",
-  sectionTitle: "font-size: 16px; font-weight: 700; color: #00d4ff; margin: 0;",
-  sectionSub: "font-size: 12px; color: #64748b; margin-top: 2px;",
-  row: "padding: 8px 16px; border-bottom: 1px solid rgba(255,255,255,0.04);",
-  rowAlt:
-    "padding: 8px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); background: rgba(255,255,255,0.02);",
-  label:
-    "font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;",
-  value: "font-size: 14px; color: #e2e8f0; margin-top: 2px;",
-  tableWrap: "padding: 12px 16px; overflow-x: auto;",
-  tableLabel:
-    "font-size: 13px; font-weight: 600; color: #94a3b8; margin-bottom: 8px;",
-  table: "width: 100%; border-collapse: collapse; font-size: 13px;",
-  th: "text-align: left; padding: 6px 10px; background: rgba(0,212,255,0.08); color: #00d4ff; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid rgba(0,212,255,0.15);",
-  td: "padding: 6px 10px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #cbd5e1;",
-  footer:
-    "text-align: center; padding: 24px 20px; border-top: 1px solid rgba(255,255,255,0.06); margin-top: 24px;",
-  footerText: "font-size: 12px; color: #475569;",
-  badge:
-    "display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;",
-  badgeYes: "background: rgba(34,197,94,0.15); color: #4ade80;",
-  badgeNo: "background: rgba(239,68,68,0.1); color: #f87171;",
-};
-
 // ─── Helpers ────────────────────────────────────────────────
-
-function esc(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
 
 function formatValue(val: unknown): string {
   if (val === null || val === undefined || val === "") return "";
   if (Array.isArray(val)) {
     if (val.length === 0) return "";
-    if (typeof val[0] === "string") return val.map(esc).join(", ");
+    if (typeof val[0] === "string") return val.join(", ");
     return "";
   }
-  const s = String(val);
-  if (s === "Yes") return `<span style="${S.badge} ${S.badgeYes}">Yes</span>`;
-  if (s === "No") return `<span style="${S.badge} ${S.badgeNo}">No</span>`;
-  return esc(s);
+  return String(val);
 }
 
-// ─── Main Builder ───────────────────────────────────────────
+// ─── Main Builder (Plain Text) ──────────────────────────────
 
-export function buildEmailHtml(data: FormData): string {
+export function buildEmailText(data: FormData): string {
   const franchisorName = (data.q1_franchisor_name as string) || "Unknown";
   const submittedAt = new Date().toLocaleString("en-US", {
     dateStyle: "full",
     timeStyle: "short",
   });
 
-  let html = `<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="${S.body}">
-<div style="${S.container}">
+  const lines: string[] = [];
 
-<!-- Header -->
-<div style="${S.header}">
-  <div style="${S.logo}">Franchise Machine&trade;</div>
-  <div style="${S.subtitle}">FDD Questionnaire Submission</div>
-  <div style="margin-top: 12px; font-size: 13px; color: #94a3b8;">
-    <strong style="color: #e2e8f0;">${esc(franchisorName)}</strong><br>
-    Submitted ${submittedAt}
-  </div>
-</div>
-`;
+  lines.push("================================================");
+  lines.push("  FRANCHISE MACHINE(TM) - FDD QUESTIONNAIRE");
+  lines.push("================================================");
+  lines.push("");
+  lines.push(`  Applicant:  ${franchisorName}`);
+  lines.push(`  Submitted:  ${submittedAt}`);
+  lines.push("");
 
   for (const section of SECTIONS) {
     // Check if section has any data
@@ -609,25 +560,24 @@ export function buildEmailHtml(data: FormData): string {
     if (!hasFieldData && !hasTableData) continue;
 
     // Section header
-    html += `\n<div style="${S.sectionHeader}">
-  <div style="${S.sectionTitle}">${esc(section.title)}</div>
-  ${section.subtitle ? `<div style="${S.sectionSub}">${esc(section.subtitle)}</div>` : ""}
-</div>\n`;
+    lines.push("------------------------------------------------");
+    lines.push(`  ${section.title.toUpperCase()}`);
+    if (section.subtitle) {
+      lines.push(`  ${section.subtitle}`);
+    }
+    lines.push("------------------------------------------------");
+    lines.push("");
 
     // Fields
-    let rowIdx = 0;
     for (const field of section.fields) {
       const val = data[field];
       if (val === null || val === undefined || val === "") continue;
       const formatted = formatValue(val);
       if (!formatted) continue;
       const label = FIELD_LABELS[field] || field;
-      const rowStyle = rowIdx % 2 === 0 ? S.row : S.rowAlt;
-      html += `<div style="${rowStyle}">
-  <div style="${S.label}">${esc(label)}</div>
-  <div style="${S.value}">${formatted}</div>
-</div>\n`;
-      rowIdx++;
+      lines.push(`  ${label}:`);
+      lines.push(`    ${formatted}`);
+      lines.push("");
     }
 
     // Tables
@@ -635,37 +585,29 @@ export function buildEmailHtml(data: FormData): string {
       const rows = data[table.key] as Record<string, string>[] | undefined;
       if (!rows || rows.length === 0) continue;
 
-      html += `<div style="${S.tableWrap}">
-  <div style="${S.tableLabel}">${esc(table.label)}</div>
-  <table style="${S.table}">
-    <thead><tr>`;
-      for (const col of table.columns) {
-        html += `<th style="${S.th}">${esc(COL_LABELS[col] || col)}</th>`;
-      }
-      html += `</tr></thead><tbody>`;
-      for (const row of rows) {
-        html += "<tr>";
+      lines.push(`  --- ${table.label} ---`);
+      lines.push("");
+
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        lines.push(`  #${i + 1}`);
         for (const col of table.columns) {
-          html += `<td style="${S.td}">${esc(row[col] || "—")}</td>`;
+          const colLabel = COL_LABELS[col] || col;
+          const val = row[col] || "—";
+          lines.push(`    ${colLabel}: ${val}`);
         }
-        html += "</tr>";
+        lines.push("");
       }
-      html += `</tbody></table></div>\n`;
     }
   }
 
-  // Footer
-  html += `
-<div style="${S.footer}">
-  <div style="${S.footerText}">
-    This submission was generated by the Franchise Machine&trade; FDD Intake Form.<br>
-    &copy; ${new Date().getFullYear()} Franchise Machine&trade; &mdash; All Rights Reserved
-  </div>
-</div>
+  lines.push("================================================");
+  lines.push("  Generated by Franchise Machine(TM) FDD Intake");
+  lines.push(`  (c) ${new Date().getFullYear()} All Rights Reserved`);
+  lines.push("================================================");
 
-</div>
-</body>
-</html>`;
-
-  return html;
+  return lines.join("\n");
 }
+
+// Keep the old export name for backward compatibility during transition
+export const buildEmailHtml = buildEmailText;

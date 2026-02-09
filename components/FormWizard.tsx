@@ -10,9 +10,8 @@ import {
   CheckCircle2,
   AlertCircle,
 } from "lucide-react";
-import Image from "next/image";
 
-import { buildEmailHtml } from "@/lib/emailFormatter";
+import { buildEmailText } from "@/lib/emailFormatter";
 import { Item1Franchisor } from "@/components/sections/Item1Franchisor";
 import { Items2to4 } from "@/components/sections/Items2to4";
 import { Item5InitialFees } from "@/components/sections/Item5InitialFees";
@@ -75,7 +74,7 @@ export function FormWizard() {
       const franchisorName =
         (formData.q1_franchisor_name as string) || "FDD Applicant";
       const replyEmail = (formData.q2_email as string) || "";
-      const htmlBody = buildEmailHtml(formData);
+      const textBody = buildEmailText(formData);
 
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
@@ -85,7 +84,7 @@ export function FormWizard() {
           subject: `New FDD Submission — ${franchisorName}`,
           from_name: franchisorName,
           replyto: replyEmail,
-          message: htmlBody,
+          message: textBody,
         }),
       });
 
@@ -170,7 +169,7 @@ export function FormWizard() {
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-brand-black/70 backdrop-blur-2xl">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
-          <Image
+          <img
             src="/logo.jpg"
             alt="Franchise Machine™"
             width={44}
@@ -316,7 +315,7 @@ function WelcomeStep() {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <Image
+        <img
           src="/logo.jpg"
           alt="Franchise Machine™"
           width={120}
