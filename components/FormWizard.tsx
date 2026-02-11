@@ -76,6 +76,7 @@ export function FormWizard() {
       const replyEmail = (formData.q2_email as string) || "";
       const textBody = buildEmailText(formData);
 
+      // Send plain text only - Web3Forms handles HTML email wrapping
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -341,7 +342,7 @@ function WelcomeStep() {
         </p>
         <div className="mt-8 space-y-4">
           <div className="flex items-start gap-4">
-            <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-cyan/15 shadow-[0_0_10px_rgba(0,212,255,0.15)]">
+            <div class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-cyan/15 shadow-[0_0_10px_rgba(0,212,255,0.15)]">
               <span className="text-[10px] font-bold text-brand-cyan">1</span>
             </div>
             <p className="text-sm leading-relaxed text-text-secondary">
