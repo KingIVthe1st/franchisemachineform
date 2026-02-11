@@ -84,7 +84,7 @@ export function FormWizard() {
           subject: `New FDD Submission — ${franchisorName}`,
           from_name: franchisorName,
           replyto: replyEmail,
-          message: textBody,
+          message: `<pre style="font-family: monospace; white-space: pre-wrap; word-wrap: break-word;">${textBody}</pre>`,
         }),
       });
 
