@@ -76,14 +76,6 @@ export function FormWizard() {
       const replyEmail = (formData.q2_email as string) || "";
       const textBody = buildEmailText(formData);
 
-      // Escape HTML entities to prevent raw HTML display
-      const escapeHTML = (str: string) => str
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -92,7 +84,7 @@ export function FormWizard() {
           subject: `New FDD Submission — ${franchisorName}`,
           from_name: franchisorName,
           replyto: replyEmail,
-          message: `<pre>${escapeHTML(textBody)}</pre>`,
+          message: textBody,
         }),
       });
 
